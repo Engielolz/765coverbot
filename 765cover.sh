@@ -76,7 +76,7 @@ function postToBluesky () { # savedAccess
       coverResult="Snow halation - Ritsuko Akizuki"
       coverWarn=1
    fi
-   result=$(curl --fail-with-body -s -X POST -H "Authorization: Bearer $savedAccess" -H 'Content-Type: application/json' "{ \"collection\": \"app.bsky.feed.post\", \"repo\": \"$did\", \"record\": { \"text\": \"$coverResult\", \"createdAt\": \"$(date +%Y-%m-%dT%H:%M:%S.%3NZ)\", \"\$type\": \"app.bsky.feed.post\" } } " -d "https://bsky.social/xrpc/com.atproto.repo.createRecord")
+   result=$(curl --fail-with-body -X POST -H "Authorization: Bearer $savedAccess" -H 'Content-Type: application/json' -d "{ \"collection\": \"app.bsky.feed.post\", \"repo\": \"$did\", \"record\": { \"text\": \"$coverResult\", \"createdAt\": \"$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)\", \"\$type\": \"app.bsky.feed.post\" } } " "https://bsky.social/xrpc/com.atproto.repo.createRecord")
    if [ "$?" = "22" ]; then
       echo 'Warning: the post failed.'
       APIErrorCode=$(echo $result | jq -r .error)
@@ -90,11 +90,26 @@ function postToBluesky () { # savedAccess
    return 0
 }
 
+function nextHour () {
+   # gemini gave me this. i apologize to all actual bash scripters out there
+   now=$(date +%s)
+   next_hour=$(((now + 3600) / 3600 * 3600))
+   # return $((next_hour - now))
+   sleepFor=$((next_hour - now))
+}
 
 
-if [[ "$1" =~ $did_regex ]] ; then
+if ! [ -z "$savedDID" ]; then
+   skipDIDFetch=1
+   did=$savedDID
+   echo 'Obtained DID from cache'
+fi
+
+
+if [[ "$skipDIDFetch" = "0" ]] && [[ "$1" =~ $did_regex ]] ; then
    skipDIDFetch=1
    did=$1
+   echo 'Obtained user-specified DID'
 fi
 if [ "$skipDIDFetch" = "0" ]; then
    echo 'DID not specified. Fetching from ATproto API'
@@ -113,4 +128,20 @@ if [ -z "$savedRefresh" ]; then
    getKeys $did $2
    if [ $? -ne 0 ]; then echo 'You need to pass an app password for auth. You should only need to do this once every 90 days.'; exit 1; fi
 fi
-# Do we need to refresh the key?
+
+echo 'Prep complete. Starting loop'
+
+while :
+do
+   # we can't call functions? bullshit
+   nextHour
+   if [ "$1" = "--posttest" ]; then sleepFor=1; fi
+   sleep $sleepFor
+   postToBluesky
+   if [ "$?" = "2" ]; then
+      refreshKeys
+      postToBluesky
+   fi
+   if [ "$1" = "--posttest" ]; then exit 0; fi
+done
+
