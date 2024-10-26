@@ -8,6 +8,8 @@ fi
 did_regex="^did:\S*:\S*"
 skipDIDFetch=0
 coverWarn=0
+refreshInterval=1800 # refresh every half hour
+postInterval=3600 # post every hour
 
 
 function saveKeys () {
@@ -15,6 +17,7 @@ function saveKeys () {
    echo 'savedAccess='$savedAccess > ./secrets.env
    echo 'savedRefresh='$savedRefresh >> ./secrets.env
    echo 'savedDID='$savedDID >> ./secrets.env
+   echo 'savedRefreshTime='$(( $(date +%s) + $refreshInterval )) >> ./secrets.env
    return 0
 }
 
@@ -90,12 +93,10 @@ function postToBluesky () { # savedAccess
    return 0
 }
 
-function nextHour () {
-   # gemini gave me this. i apologize to all actual bash scripters out there
+function napTime () {
    now=$(date +%s)
-   next_hour=$(((now + 3600) / 3600 * 3600))
-   # return $((next_hour - now))
-   sleepFor=$((next_hour - now))
+   next_hour=$(((now + $1) / $1 * $1))
+   sleep $((next_hour - now))
 }
 
 
@@ -133,10 +134,8 @@ echo 'Prep complete. Starting loop'
 
 while :
 do
-   # we can't call functions? bullshit
-   nextHour
-   if [ "$1" = "--posttest" ]; then sleepFor=1; fi
-   sleep $sleepFor
+   if ! [ "$1" = "--posttest" ]; then napTime $postInterval; fi
+   if [ "$(date +%s)" -gt "$savedRefreshTime" ]; then refreshKeys; fi
    postToBluesky
    if [ "$?" = "2" ]; then
       refreshKeys
