@@ -58,18 +58,33 @@ function getIdolName () {
 }
 
 function dbgDisplayIdolAndGroups () {
-   echo "Idol: $(getIdolName $1)"
-   echo "Groups:"
+   echo "Idol/Unit: $(getIdolName $1)"
+   echo 'In' $(displayIdolGroupDataWithoutIdol $1 | wc -l) "groups:"
    displayIdolGroupDataWithoutIdol $1
-   echo 'Total:' $(displayIdolGroupDataWithoutIdol $1 | wc -l)
+}
+
+function pickSong () {
+   songNumber=$((1 + $RANDOM % $1 ))
+   echo $(echo "$songlist" | sed -n $songNumber'p')
+   return
 }
 
 
-# Pick a group...
+function generateCover () {
+   idolNumber=$((1 + $RANDOM % $(wc -l < data/idols.txt) ))
+   idol=$(getIdolName $idolNumber)
+   checkAllSongs $idolNumber
+   generatedCover=$(pickSong $(echo "$songlist" | wc -l))" - $idol"
+   return
+}
 
-dataLines=$(wc -l < data/idols.txt)
-aNumber=$((1 + $RANDOM % $dataLines ))
-dbgDisplayIdolAndGroups $aNumber
-checkAllSongs $aNumber
-echo "List is $songlist"
-echo "There are $(echo "$songlist" | wc -l) songs!"
+function cliTest () {
+   generateCover
+   echo "Cover: $generatedCover"
+   dbgDisplayIdolAndGroups $idolNumber
+   echo "$(echo "$songlist" | wc -l) songs available:"
+   echo "$songlist"
+}
+
+if [ "$1" = "--test" ]; then cliTest; exit 0; fi
+if [ "$0" = "$BASH_SOURCE" ] || [ -z "$BASH_SOURCE" ]; then echo "You might be calling this script by itself. Please pass --test parameter to try out the generator."; fi
