@@ -7,10 +7,27 @@ function loadFail () {
    exit 127
 }
 
+function installService () {
+   if ! [[ -d /run/systemd/system ]]; then echo "No systemd detected. Please manage the service manually with your init system."; exit 1; fi
+   if ! [ "$1" = "un" ]; then
+      echo "Installing service"
+      cp ./765cover.service /etc/systemd/system/
+      systemctl enable 765cover
+   else
+      echo "Removing service"
+      systemctl disable 765cover
+      rm /etc/systemd/system/765cover.service
+   fi
+   exit 0
+}
+
 source bash-atproto.sh
 if ! [ "$?" = "0" ]; then loadFail; fi
 source covergen.sh
 if ! [ "$?" = "0" ]; then loadFail; fi
+
+if [ "$1" = "--install" ]; then installService; fi
+if [ "$1" = "--uninstall" ]; then installService un; fi
 
 refreshInterval=1800 # refresh every half hour
 # 3600 to post every hour
