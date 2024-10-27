@@ -33,8 +33,7 @@ refreshInterval=1800 # refresh every half hour
 # 3600 to post every hour
 postInterval=14400 # post every 4 hours
 
-function saveKeysAndRefreshTime () {
-   saveKeys
+function saveRefreshTime () {
    echo 'savedRefreshTime='$(( $(date +%s) + $refreshInterval )) >> ./secrets.env
 }
 
@@ -50,6 +49,7 @@ function postingLogic () {
    postToBluesky "$generatedCover"
    if [ "$?" = "2" ]; then
       refreshKeys
+      saveRefreshTime
       postToBluesky "$generatedCover"
    fi
    generatedCover=
@@ -64,7 +64,10 @@ if [ -z "$savedRefresh" ]; then
    echo 'Keys not found; obtaining'
    getKeys $did $2
    if [ $? -ne 0 ]; then echo 'You need to pass an app password for auth. You should only need to do this once every 90 days.'; exit 1; fi
+   saveRefreshTime
 fi
+
+if [ -z "$savedRefreshTime" ]; then savedRefreshTime=0; fi
 
 
 echo 'Prep complete. Starting loop'
@@ -74,7 +77,7 @@ if [ "$1" = "--post-on-start" ]; then postingLogic; fi
 while :
 do
    if ! [ "$1" = "--posttest" ]; then napTime $postInterval; fi
-   if [ "$(date +%s)" -gt "$savedRefreshTime" ]; then refreshKeys; fi
+   if [ "$(date +%s)" -gt "$savedRefreshTime" ]; then refreshKeys; saveRefreshTime; fi
    postingLogic
    if [ "$1" = "--posttest" ]; then exit 0; fi
 done
