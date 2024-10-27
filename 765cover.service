@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 Restart=always
 User=root
+WorkingDirectory=/usr/local/bin/765coverbot
 ExecStart=/usr/local/bin/765coverbot/765cover.sh
 
 [Install]
