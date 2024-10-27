@@ -11,12 +11,12 @@ function installService () {
    if ! [[ -d /run/systemd/system ]]; then echo "No systemd detected. Please manage the service manually with your init system."; exit 1; fi
    if ! [ "$1" = "un" ]; then
       echo "Installing service"
-      cp ./765cover.service /etc/systemd/system/
-      systemctl enable 765cover
+      cp ./765coverbot.service /etc/systemd/system/
+      systemctl enable 765coverbot
    else
       echo "Removing service"
-      systemctl disable 765cover
-      rm /etc/systemd/system/765cover.service
+      systemctl disable 765coverbot
+      rm /etc/systemd/system/765coverbot.service
    fi
    exit 0
 }
