@@ -78,6 +78,14 @@ function generateCover () {
    return
 }
 
+function cliMassGenerate () {
+   if [ -z "$1" ]; then echo "Specify how many covers should be made"; return 1; fi
+   for i in $(seq 1 $1); do
+      generateCover
+      echo "$generatedCover"
+   done
+}
+
 function cliTest () {
    generateCover
    echo "Cover: $generatedCover"
@@ -87,4 +95,5 @@ function cliTest () {
 }
 
 if [ "$1" = "--test" ]; then cliTest; exit 0; fi
+if [ "$1" = "--massgenerate" ]; then cliMassGenerate $2; exit 0; fi
 if [ "$0" = "$BASH_SOURCE" ] || [ -z "$BASH_SOURCE" ]; then echo "You might be calling this script by itself. Please pass --test parameter to try out the generator."; fi
