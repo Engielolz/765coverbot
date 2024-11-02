@@ -70,11 +70,11 @@ if [ -z "$savedAccessTimestamp" ]; then savedAccessTimestamp=0; fi
 
 echo 'Prep complete. Starting loop'
 
-if [ "$1" = "--post-on-start" || "$1" = "--posttest" ]; then postingLogic; fi
+if [ "$1" = "--post-on-start" ] || [ "$1" = "--posttest" ]; then postingLogic; fi
 
 while :
 do
-   napTime $postInterval; fi
+   napTime $postInterval
    if [ "$(date +%s)" -gt "$(( $savedAccessTimestamp + $refreshInterval ))" ]; then
       refreshKeys
       if ! [ "$?" = "0" ]; then
