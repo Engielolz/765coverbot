@@ -4,11 +4,33 @@ This is a bot thing made entirely in Bash and cURL that posts random covers by 7
 
 ## bash-atproto
 
-Perhaps the cheapest and dirtiest way to make a bot for Bluesky, this is a bash script that makes calls to cURL which in turns makes calls to Bluesky APIs to authenticate and post.
+This is a bash script that makes calls to cURL which in turns makes calls to Bluesky APIs to authenticate and post.
 
-**Do not use this for anything serious!**
+It supports the following operations (all API calls are done to the [Entryway](https://docs.bsky.app/docs/advanced-guides/entryway)):
+
+* Resolving a handle to did:plc
+
+* Authenticating with your PDS
+
+* Saving and loading a secrets file (contains your access and refresh tokens)
+
+* Refreshing access tokens
+
+* Creating a text post (in en-US)
+
+* Reposting
+
+* Preparing an image for Bluesky (including resizing and compressing)
+
+* Uploading blobs
+
+* Creating a post with a single embedded image
+
+While that's all cool and all, **do not use this for anything serious!** This is tested to work for bots posting every hour, behind a router without direct internet access. If someone manages to break into your server, they'll be able to use the saved secrets and ruin your Bluesky accounts.
 
 If for whatever reason you still want to use this, remember that this script will break in the future when OAuth is required to authenticate with ATProto.
+
+In the context of 765coverbot, the functions related to reposting, blobs and images are not used. These functions however are used in [imasimgbot](https://github.com/engielolz/imasimgbot).
 
 ### Dependencies
 
@@ -34,6 +56,6 @@ You will probably need to run all these commands as root:
 
 3. Run `765cover.sh` with the parameter `--install` which will install and enable the bot service
 
-4. Start the bot with `sudo systemctl start 765coverbot`
+4. Start the bot with `systemctl start 765coverbot`
 
 To uninstall the bot, stop the bot with `systemctl stop 765coverbot` then run the script as root with the parameter `--uninstall` which will disable and remove the service file. Then you can remove the directory `/usr/local/bin/765coverbot` to fully remove the bot.
