@@ -56,14 +56,17 @@ function postingLogic () {
    generatedCover=
 }
 
+loadSecrets ./secrets.sh
 didInit $1
 if ! [ "$?" = "0" ]; then echo "DID init failure. Please check your DID."; exit 1; fi
 
 # Do we have keys?
 if [ -z "$savedRefresh" ]; then 
    echo 'Keys not found; obtaining'
+   if [ -z "$2" ]; then echo 'You need to pass an app password for auth. You should only need to do this once.'; exit 1; fi
    getKeys $did $2
-   if [ $? -ne 0 ]; then echo 'You need to pass an app password for auth. You should only need to do this once every 90 days.'; exit 1; fi
+   if [ $? -ne 0 ]; then echo "Couldn't log in. Verify your credentials are correct."; exit 1; fi
+   saveSecrets ./secrets.env
 fi
 
 if [ -z "$savedAccessTimestamp" ]; then savedAccessTimestamp=0; fi
@@ -81,6 +84,7 @@ do
          echo "Refresh failure. Not continuing."
          exit 1
       fi
+      saveSecrets ./secrets.env
    fi
    postingLogic
 done
