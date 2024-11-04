@@ -56,7 +56,7 @@ function postingLogic () {
    generatedCover=
 }
 
-loadSecrets ./secrets.sh
+loadSecrets ./secrets.env
 didInit $1
 if ! [ "$?" = "0" ]; then echo "DID init failure. Please check your DID."; exit 1; fi
 
