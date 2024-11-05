@@ -36,11 +36,11 @@ In the context of 765coverbot, the functions related to reposting, blobs and ima
 
 To use this script you will need:
 
-* cURL 7.76.0 or later. 
+* `curl` 7.76.0 or later. 
 
-* jq
+* `jq`
 
-The other dependencies should come with your Linux distro.
+Posting images (not used by 765coverbot) additionally requires `imagemagick`, `exiftool` and `uuidgen`, though the latter should come with your Linux distro.
 
 ## Setup
 
