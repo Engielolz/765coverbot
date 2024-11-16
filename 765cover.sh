@@ -59,6 +59,10 @@ function postingLogic () {
 loadSecrets ./secrets.env
 didInit $1
 if ! [ "$?" = "0" ]; then echo "DID init failure. Please check your DID."; exit 1; fi
+if [ -z "$savedPDS" ]; then
+   findPDS $did
+   if ! [ "$?" = 0 ] || [ -z "$savedPDS" ]; then iberr "PDS lookup failure"; exit 1; fi
+fi
 
 # Do we have keys?
 if [ -z "$savedRefresh" ]; then 
