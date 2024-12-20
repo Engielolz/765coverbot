@@ -6,9 +6,11 @@ This is a bot thing made entirely in Bash and cURL that posts random covers by 7
 
 This is a bash script that makes calls to cURL which in turns makes calls to Bluesky APIs to authenticate and post.
 
-It supports the following operations (all API calls are done to the [Entryway](https://docs.bsky.app/docs/advanced-guides/entryway)):
+It supports the following operations (most API calls are done to the account's PDS):
 
 * Resolving a handle to did:plc
+
+* Resolving an account's PDS from the DID
 
 * Authenticating with your PDS
 
@@ -24,7 +26,7 @@ It supports the following operations (all API calls are done to the [Entryway](h
 
 * Uploading blobs
 
-* Creating a post with a single embedded image
+* Creating a post with a single embedded image with alt text
 
 While that's all cool and all, **do not use this for anything serious!** This is tested to work for bots posting every hour, behind a router without direct internet access. If someone manages to break into your server, they'll be able to use the saved secrets and ruin your Bluesky accounts.
 
