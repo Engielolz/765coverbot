@@ -44,11 +44,11 @@ function napTime () {
 function postingLogic () {
    generateCover
    echo "Posting $generatedCover"
-   postToBluesky "$generatedCover"
+   bap_postToBluesky "$generatedCover"
    error=$?
    if [ "$error" = "2" ]; then
-      refreshKeys
-      postToBluesky "$generatedCover"
+      bap_refreshKeys
+      bap_postToBluesky "$generatedCover"
    elif ! [ "$error" = "0" ]; then
       echo "Error when posting the cover."
       echo "Error code: $error"
@@ -56,11 +56,11 @@ function postingLogic () {
    generatedCover=
 }
 
-loadSecrets ./secrets.env
-didInit $1
+bap_loadSecrets ./secrets.env
+bap_didInit $1
 if ! [ "$?" = "0" ]; then echo "DID init failure. Please check your DID."; exit 1; fi
 if [ -z "$savedPDS" ]; then
-   findPDS $did
+   bap_findPDS $did
    if ! [ "$?" = 0 ] || [ -z "$savedPDS" ]; then echo "PDS lookup failure"; exit 1; fi
 fi
 
@@ -68,9 +68,9 @@ fi
 if [ -z "$savedRefresh" ]; then 
    echo 'Keys not found; obtaining'
    if [ -z "$2" ]; then echo 'You need to pass an app password for auth. You should only need to do this once.'; exit 1; fi
-   getKeys $did $2
+   bap_getKeys $did $2
    if [ $? -ne 0 ]; then echo "Couldn't log in. Verify your credentials are correct."; exit 1; fi
-   saveSecrets ./secrets.env
+   bap_saveSecrets ./secrets.env
 fi
 
 if [ -z "$savedAccessTimestamp" ]; then savedAccessTimestamp=0; fi
@@ -83,12 +83,12 @@ while :
 do
    napTime $postInterval
    if [ "$(date +%s)" -gt "$(( $savedAccessTimestamp + $refreshInterval ))" ]; then
-      refreshKeys
+      bap_refreshKeys
       if ! [ "$?" = "0" ]; then
          echo "Refresh failure. Not continuing."
          exit 1
       fi
-      saveSecrets ./secrets.env
+      bap_saveSecrets ./secrets.env
    fi
    postingLogic
 done
