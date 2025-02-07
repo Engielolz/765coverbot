@@ -8,11 +8,11 @@ This is a bash script that makes calls to cURL which in turns makes calls to Blu
 
 It supports the following operations (most API calls are done to the account's PDS):
 
-* Resolving a handle to did:plc
+* Resolving a handle to did:plc/did:web
 
 * Resolving an account's PDS from the DID
 
-* Authenticating with your PDS
+* Authenticating with the PDS
 
 * Saving and loading a secrets file (contains your access and refresh tokens)
 
@@ -28,7 +28,7 @@ It supports the following operations (most API calls are done to the account's P
 
 * Creating a post with a single embedded image with alt text
 
-While that's all cool and all, **do not use this for anything serious!** This is tested to work for bots posting every hour, behind a router without direct internet access. If someone manages to break into your server, they'll be able to use the saved secrets and ruin your Bluesky accounts.
+While that's all cool and all, **do not use this for anything serious!** This is tested to work for bots posting on a timer, behind a router without direct internet access. If an attacker manages to break into your server, they'll be able to use the saved credentials of the Bluesky accounts.
 
 If for whatever reason you still want to use this, remember that this script will break in the future when OAuth is required to authenticate with ATProto.
 
