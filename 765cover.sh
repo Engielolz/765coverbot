@@ -25,6 +25,7 @@ function installService () {
 
 source bash-atproto.sh
 if ! [ "$?" = "0" ]; then loadFail; fi
+bap_curlUserAgent="$bap_curlUserAgent 765coverbot/$(git -c safe.directory=$(pwd) describe --always --dirty) (+https://github.com/Engielolz/765coverbot)"
 source covergen.sh
 if ! [ "$?" = "0" ]; then loadFail; fi
 
@@ -44,11 +45,11 @@ function napTime () {
 function postingLogic () {
    generateCover
    echo "Posting $generatedCover"
-   bap_postToBluesky "$generatedCover"
+   bap_postToBluesky "$generatedCover" en
    error=$?
    if [ "$error" = "2" ]; then
       bap_refreshKeys
-      bap_postToBluesky "$generatedCover"
+      bap_postToBluesky "$generatedCover" en
    elif ! [ "$error" = "0" ]; then
       echo "Error when posting the cover."
       echo "Error code: $error"
