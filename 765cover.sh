@@ -32,7 +32,6 @@ if ! [ "$?" = "0" ]; then loadFail; fi
 if [ "$1" = "--install" ]; then installService; fi
 if [ "$1" = "--uninstall" ]; then installService un; fi
 
-refreshInterval=1800 # refresh every half hour
 # 3600 to post every hour
 postInterval=14400 # post every 4 hours
 
@@ -76,8 +75,6 @@ if [ -z "$savedPDS" ]; then
    if ! [ "$?" = 0 ] || [ -z "$savedPDS" ]; then echo "PDS lookup failure"; exit 1; fi
 fi
 
-if [ -z "$savedAccessTimestamp" ]; then savedAccessTimestamp=0; fi
-
 echo 'Prep complete. Starting loop'
 
 if [ "$1" = "--post-on-start" ] || [ "$1" = "--posttest" ]; then postingLogic; fi
@@ -85,7 +82,7 @@ if [ "$1" = "--post-on-start" ] || [ "$1" = "--posttest" ]; then postingLogic; f
 while :
 do
    napTime $postInterval
-   if [ "$(date +%s)" -gt "$(( $savedAccessTimestamp + $refreshInterval ))" ]; then
+   if [ "$(date +%s)" -gt "$(( $savedAccessExpiry - 300 ))" ]; then
       bap_refreshKeys
       if ! [ "$?" = "0" ]; then
          echo "Refresh failure. Not continuing."
