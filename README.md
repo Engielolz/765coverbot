@@ -1,3 +1,7 @@
+## Notice
+
+765coverbot is no longer operating or supported as of April 2025. For information on the latest version of bash-atproto, please see the [bash-atproto repository](https://tangled.sh/@did:plc:s2cyuhd7je7eegffpnurnpud/bash-atproto).
+
 # 765 Cover Bot
 
 This is a bot thing made entirely in Bash and cURL that posts random covers by 765 Production idols.
@@ -61,3 +65,7 @@ You will probably need to run all these commands as root:
 4. Start the bot with `systemctl start 765coverbot`
 
 To uninstall the bot, stop the bot with `systemctl stop 765coverbot` then run the script as root with the parameter `--uninstall` which will disable and remove the service file. Then you can remove the directory `/usr/local/bin/765coverbot` to fully remove the bot.
+
+## License
+
+765coverbot is licensed under the MIT License.

@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
 # example=$(grep -F "ARMooo" songs.txt)
 # example+="
 # $(grep -F "all" songs.txt)"

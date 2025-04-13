@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
 echo '765 Pro Cover Bot'
 echo 'Using atproto the dirty way! (bash and cURL)'
 
